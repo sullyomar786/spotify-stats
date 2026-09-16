@@ -1,0 +1,13 @@
+{
+  "name": "spotify-stats",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backup and merge of Spotify listening history (Extended Streaming History export + live-polled data from StandBy dashboard).",
+  "main": "backup.js",
+  "scripts": {
+    "backup": "node backup.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
