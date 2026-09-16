@@ -71,7 +71,30 @@ function groupByMonth(entries) {
   return groups;
 }
 
+// Converts a raw live-poll entry (Upstash shape) into the unified schema.
+function toUnifiedShape(raw) {
+  return {
+    played_at: raw.played_at,
+    track: raw.track,
+    artist: raw.artist,
+    album: null,
+    duration_ms: raw.duration_ms,
+    ms_played: null,
+    source: "live_poll",
+    platform: null,
+    country: null,
+    spotify_track_uri: null,
+    reason_start: null,
+    reason_end: null,
+    shuffle: null,
+    skipped: null,
+    offline: null,
+    incognito_mode: null,
+  };
+}
+
 // A stable identity for dedup: same track + same played_at = same play.
+// Works across sources since both use the same played_at/track/artist fields.
 function entryId(entry) {
   return `${entry.played_at}|${entry.track}|${entry.artist}`;
 }
@@ -107,8 +130,9 @@ function mergeAndDedupe(existing, incoming) {
 
 async function main() {
   console.log("Fetching play-history from Upstash...");
-  const entries = await fetchPlayHistory();
-  console.log(`Fetched ${entries.length} total entries from Upstash.`);
+  const rawEntries = await fetchPlayHistory();
+  console.log(`Fetched ${rawEntries.length} total entries from Upstash.`);
+  const entries = rawEntries.map(toUnifiedShape);
 
   if (entries.length === 0) {
     console.log("Nothing to do.");
