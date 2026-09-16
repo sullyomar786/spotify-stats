@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Listening — a record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0F0D0D;
+    --black-lift: #1C1717;
+    --red: #C4483A;
+    --red-dim: #8a3329;
+    --text: #F2EDEA;
+    --text-dim: #5C4341;
+    --text-mid: #9C8783;
+    --rule: #2A2222;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .display {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+  }
+
+  a { color: var(--red); }
+
+  ::selection { background: var(--red); color: var(--black); }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 28px 120px;
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 40px 20px 100px; }
+  }
+
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 64px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  header.top .mark {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+
+  header.top .updated {
+    font-size: 0.8rem;
+    color: var(--text-mid);
+  }
+
+  .hero {
+    margin-bottom: 72px;
+  }
+
+  .hero .figure {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(3.2rem, 11vw, 6.4rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 6px;
+  }
+
+  .hero .figure em {
+    font-style: normal;
+    color: var(--red);
+  }
+
+  .hero .label {
+    font-size: 1rem;
+    color: var(--text-mid);
+    max-width: 46ch;
+  }
+
+  .support-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 44px;
+  }
+
+  @media (max-width: 640px) {
+    .support-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .support-row .stat .num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .support-row .stat .cap {
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    margin-top: 2px;
+  }
+
+  section.block {
+    margin-bottom: 72px;
+  }
+
+  section.block .heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  section.block .heading h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  section.block .heading .sub {
+    font-size: 0.8rem;
+    color: var(--text-mid);
+  }
+
+  .story-line {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 1.45;
+    max-width: 62ch;
+    color: var(--text);
+  }
+
+  .story-line .accent { color: var(--red); }
+
+  .story-sub {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    max-width: 60ch;
+  }
+
+  /* Heatmap */
+  .heatmap {
+    display: grid;
+    grid-template-columns: auto repeat(24, 1fr);
+    gap: 3px;
+    align-items: center;
+  }
+
+  .heatmap .row-label {
+    font-size: 0.7rem;
+    color: var(--text-mid);
+    padding-right: 10px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .heatmap .cell {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--rule);
+  }
+
+  .heatmap .hour-labels {
+    display: contents;
+  }
+
+  .heatmap .hour-label {
+    font-size: 0.6rem;
+    color: var(--text-mid);
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .heatmap { grid-template-columns: auto repeat(12, 1fr); }
+    .heatmap.collapsed-hours .cell:nth-child(odd) { display: none; }
+  }
+
+  /* Ranked lists */
+  .ranked-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  @media (max-width: 640px) {
+    .ranked-pair { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .ranked-list h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin: 0 0 14px;
+  }
+
+  .ranked-list ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ranked-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.95rem;
+  }
+
+  .ranked-list li:last-child { border-bottom: none; }
+
+  .ranked-list .name {
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ranked-list .count {
+    color: var(--red);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  /* Source breakdown bar */
+  .source-bar {
+    display: flex;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .source-bar .seg.live { background: var(--red); }
+  .source-bar .seg.ext { background: var(--text-dim); }
+
+  .source-legend {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85rem;
+    color: var(--text-mid);
+  }
+
+  .source-legend .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  .source-legend .dot.live { background: var(--red); }
+  .source-legend .dot.ext { background: var(--text-dim); }
+
+  /* Loading / error states */
+  .status {
+    padding: 80px 0;
+    text-align: center;
+    color: var(--text-mid);
+    font-size: 0.95rem;
+  }
+
+  .status .display {
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  footer {
+    margin-top: 96px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .count-up { animation: rise 0.6s ease-out; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--red);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="mark display">Listening</span>
+    <span class="updated" id="updated-label">loading…</span>
+  </header>
+
+  <div id="content">
+    <div class="status">
+      <span class="display">Pulling in the record.</span>
+      Fetching your listening history from the archive.
+    </div>
+  </div>
+</div>
+
+<script>
+// Since this page is hosted on GitHub Pages inside the same repo as the
+// data/ folder, we can fetch everything with relative paths — no CSP issues,
+// no cross-origin requests, no GitHub API rate limits.
+const DATA_BASE = "data/";
+
+// ---------- Data loading ----------
+
+async function listMonthFiles() {
+  // Uses a manifest file (data/manifest.json) listing available month files.
+  // This avoids depending on the GitHub API (which has a low rate limit for
+  // unauthenticated requests) and works identically on GitHub Pages.
+  const res = await fetch(DATA_BASE + "manifest.json");
+  if (!res.ok) throw new Error("Could not load manifest.json (status " + res.status + ")");
+  const manifest = await res.json();
+  return manifest.files.sort();
+}
+
+async function fetchMonth(filename) {
+  const res = await fetch(DATA_BASE + filename);
+  if (!res.ok) throw new Error("Failed to fetch " + filename);
+  return res.json();
+}
+
+async function loadAllData() {
+  const filenames = await listMonthFiles();
+  const chunks = await Promise.all(filenames.map(fetchMonth));
+  return chunks.flat();
+}
+
+// ---------- Aggregation ----------
+
+function aggregate(entries) {
+  const now = Date.now();
+  const totalPlays = entries.length;
+
+  let totalMsPlayed = 0;
+  const artistCounts = new Map();
+  const trackCounts = new Map();
+  const trackFirstPlay = new Map();
+  const hourDayGrid = Array.from({ length: 7 }, () => Array(24).fill(0));
+  let liveCount = 0;
+  let extCount = 0;
+  let skipCount = 0;
+  let skipEligible = 0;
+
+  for (const e of entries) {
+    const ms = e.ms_played ?? e.duration_ms ?? 0;
+    totalMsPlayed += ms;
+
+    if (e.artist) {
+      artistCounts.set(e.artist, (artistCounts.get(e.artist) || 0) + 1);
+    }
+    if (e.track) {
+      const key = e.track + " — " + (e.artist || "Unknown");
+      trackCounts.set(key, (trackCounts.get(key) || 0) + 1);
+      if (!trackFirstPlay.has(key) || e.played_at < trackFirstPlay.get(key)) {
+        trackFirstPlay.set(key, e.played_at);
+      }
+    }
+
+    const d = new Date(e.played_at);
+    const day = d.getUTCDay();
+    const hour = d.getUTCHours();
+    hourDayGrid[day][hour]++;
+
+    if (e.source === "live_poll") liveCount++;
+    if (e.source === "extended_history") extCount++;
+
+    if (e.skipped !== null && e.skipped !== undefined) {
+      skipEligible++;
+      if (e.skipped === true) skipCount++;
+    }
+  }
+
+  const topArtists = [...artistCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+
+  const topTracks = [...trackCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+
+  // Recent 7-day window for the "story line"
+  const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+  const recentEntries = entries.filter(e => e.played_at >= sevenDaysAgo);
+  const recentArtistCounts = new Map();
+  const recentTrackCounts = new Map();
+  for (const e of recentEntries) {
+    if (e.artist) recentArtistCounts.set(e.artist, (recentArtistCounts.get(e.artist) || 0) + 1);
+    if (e.track) {
+      const key = e.track + " — " + (e.artist || "Unknown");
+      recentTrackCounts.set(key, (recentTrackCounts.get(key) || 0) + 1);
+    }
+  }
+  const topRecentTrack = [...recentTrackCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+  const topRecentArtist = [...recentArtistCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+
+  const earliestPlay = entries.reduce((min, e) => Math.min(min, e.played_at), Infinity);
+  const spanDays = Math.round((now - earliestPlay) / (1000 * 60 * 60 * 24));
+
+  return {
+    totalPlays,
+    totalHours: totalMsPlayed / 1000 / 60 / 60,
+    uniqueArtists: artistCounts.size,
+    uniqueTracks: trackCounts.size,
+    topArtists,
+    topTracks,
+    hourDayGrid,
+    liveCount,
+    extCount,
+    skipCount,
+    skipEligible,
+    topRecentTrack,
+    topRecentArtist,
+    recentTotal: recentEntries.length,
+    spanDays,
+  };
+}
+
+// ---------- Rendering ----------
+
+function fmtNum(n) {
+  return Math.round(n).toLocaleString();
+}
+
+function renderHeatmap(grid) {
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  let max = 0;
+  for (const row of grid) for (const v of row) if (v > max) max = v;
+
+  let html = '<div class="heatmap">';
+  for (let d = 0; d < 7; d++) {
+    html += `<span class="row-label">${dayLabels[d]}</span>`;
+    for (let h = 0; h < 24; h++) {
+      const v = grid[d][h];
+      const intensity = max > 0 ? v / max : 0;
+      const alpha = 0.08 + intensity * 0.85;
+      const bg = intensity > 0
+        ? `rgba(196, 72, 58, ${alpha.toFixed(2)})`
+        : "var(--rule)";
+      html += `<span class="cell" style="background:${bg}" title="${dayLabels[d]} ${h}:00 — ${v} plays"></span>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderRankedList(title, entries, formatFn) {
+  let html = `<div class="ranked-list"><h3>${title}</h3><ol>`;
+  entries.forEach(([name, count]) => {
+    html += `<li><span class="name">${escapeHtml(name)}</span><span class="count">${formatFn(count)}</span></li>`;
+  });
+  html += '</ol></div>';
+  return html;
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function render(stats) {
+  const skipRate = stats.skipEligible > 0
+    ? Math.round((stats.skipCount / stats.skipEligible) * 100)
+    : null;
+
+  const sourceLivePct = stats.totalPlays > 0 ? (stats.liveCount / stats.totalPlays) * 100 : 0;
+  const sourceExtPct = stats.totalPlays > 0 ? (stats.extCount / stats.totalPlays) * 100 : 0;
+
+  let storyHtml = "";
+  if (stats.topRecentTrack) {
+    const [trackName, count] = stats.topRecentTrack;
+    const [track] = trackName.split(" — ");
+    storyHtml = `
+      <p class="story-line">This week, <span class="accent">${escapeHtml(track)}</span> played ${count} time${count === 1 ? "" : "s"}.</p>
+      <p class="story-sub">${stats.recentTotal.toLocaleString()} plays logged in the last 7 days${stats.topRecentArtist ? `, led by ${escapeHtml(stats.topRecentArtist[0])}` : ""}.</p>
+    `;
+  } else {
+    storyHtml = `<p class="story-line">No plays logged in the last 7 days.</p>`;
+  }
+
+  document.getElementById("content").innerHTML = `
+    <div class="hero count-up">
+      <p class="figure display">${fmtNum(stats.totalHours)}<em>h</em></p>
+      <p class="label">listened across ${stats.spanDays.toLocaleString()} days, from ${stats.uniqueArtists.toLocaleString()} artists.</p>
+      <div class="support-row">
+        <div class="stat">
+          <div class="num display">${stats.totalPlays.toLocaleString()}</div>
+          <div class="cap">total plays</div>
+        </div>
+        <div class="stat">
+          <div class="num display">${stats.uniqueTracks.toLocaleString()}</div>
+          <div class="cap">distinct tracks</div>
+        </div>
+        <div class="stat">
+          <div class="num display">${skipRate !== null ? skipRate + "%" : "—"}</div>
+          <div class="cap">skip rate${skipRate === null ? " (no data)" : ""}</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="block">
+      <div class="heading">
+        <h2>This week</h2>
+      </div>
+      ${storyHtml}
+    </section>
+
+    <section class="block">
+      <div class="heading">
+        <h2>When you listen</h2>
+        <span class="sub">by hour and day, UTC</span>
+      </div>
+      ${renderHeatmap(stats.hourDayGrid)}
+    </section>
+
+    <section class="block">
+      <div class="heading">
+        <h2>Most played</h2>
+      </div>
+      <div class="ranked-pair">
+        ${renderRankedList("Artists", stats.topArtists, c => c.toLocaleString())}
+        ${renderRankedList("Tracks", stats.topTracks, c => c.toLocaleString())}
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="heading">
+        <h2>Where the data comes from</h2>
+      </div>
+      <div class="source-bar">
+        <div class="seg live" style="width:${sourceLivePct}%"></div>
+        <div class="seg ext" style="width:${sourceExtPct}%"></div>
+      </div>
+      <div class="source-legend">
+        <span><span class="dot live"></span>Live poll — ${stats.liveCount.toLocaleString()}</span>
+        <span><span class="dot ext"></span>Extended history — ${stats.extCount.toLocaleString()}</span>
+      </div>
+    </section>
+
+    <footer>
+      Built from ${stats.totalPlays.toLocaleString()} logged plays. Updates daily.
+    </footer>
+  `;
+
+  document.getElementById("updated-label").textContent =
+    new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function renderError(err) {
+  document.getElementById("content").innerHTML = `
+    <div class="status">
+      <span class="display">Couldn't reach the record.</span>
+      ${escapeHtml(err.message)}. Check the repo is public and the data folder exists.
+    </div>
+  `;
+  document.getElementById("updated-label").textContent = "—";
+}
+
+// ---------- Init ----------
+
+(async function init() {
+  try {
+    const entries = await loadAllData();
+    if (entries.length === 0) {
+      renderError(new Error("No listening data found"));
+      return;
+    }
+    const stats = aggregate(entries);
+    render(stats);
+  } catch (err) {
+    renderError(err);
+  }
+})();
+</script>
+
+</body>
+</html>

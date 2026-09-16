@@ -139,8 +139,20 @@ function main() {
     totalAdded += addedCount;
   }
 
+  writeManifest();
+
   console.log(`\nDone. ${totalAdded} new entries added across all months.`);
   console.log("Note: entries already present from live-poll data were upgraded to the richer Extended History version where a match was found.");
+}
+
+function writeManifest() {
+  const files = fs
+    .readdirSync(DATA_DIR)
+    .filter((f) => f.endsWith(".json") && f !== "manifest.json")
+    .sort();
+  const manifestPath = path.join(DATA_DIR, "manifest.json");
+  fs.writeFileSync(manifestPath, JSON.stringify({ files }, null, 2) + "\n");
+  console.log(`manifest.json updated: ${files.length} month files listed.`);
 }
 
 main();

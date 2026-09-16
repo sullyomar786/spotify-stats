@@ -160,7 +160,22 @@ async function main() {
     }
   }
 
+  writeManifest();
+
   console.log(`Done. ${totalAdded} new entries added across all months.`);
+}
+
+// Writes data/manifest.json listing every month file present, so the
+// front-end (hosted on GitHub Pages) knows what to fetch without needing
+// the GitHub API.
+function writeManifest() {
+  const files = fs
+    .readdirSync(DATA_DIR)
+    .filter((f) => f.endsWith(".json") && f !== "manifest.json")
+    .sort();
+  const manifestPath = path.join(DATA_DIR, "manifest.json");
+  fs.writeFileSync(manifestPath, JSON.stringify({ files }, null, 2) + "\n");
+  console.log(`manifest.json updated: ${files.length} month files listed.`);
 }
 
 main().catch((err) => {
