@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Artists — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="artists.html">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Artists</h1>
+    <p>Every artist you've logged a play for, ranked by total plays. Click through for a full breakdown of any one.</p>
+  </div>
+
+  <div class="history-controls">
+    <input type="text" id="search-box" placeholder="Search artists…">
+  </div>
+
+  <div id="content">
+    <div class="status"><span class="display">Counting up every name.</span> Ranking artists by total plays.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+const DATA_BASE = "data/";
+let allArtists = [];
+
+function aggregateArtists(entries) {
+  const map = new Map();
+  for (const e of entries) {
+    if (!e.artist) continue;
+    if (!map.has(e.artist)) {
+      map.set(e.artist, { plays: 0, ms: 0, firstPlay: Infinity, lastPlay: 0 });
+    }
+    const a = map.get(e.artist);
+    a.plays++;
+    a.ms += DataCore.playedMs(e);
+    if (e.played_at < a.firstPlay) a.firstPlay = e.played_at;
+    if (e.played_at > a.lastPlay) a.lastPlay = e.played_at;
+  }
+  return [...map.entries()]
+    .map(([name, stats]) => ({ name, ...stats }))
+    .sort((a, b) => b.plays - a.plays);
+}
+
+function renderGrid(artists) {
+  if (artists.length === 0) {
+    return `<div class="status">No artists match that search.</div>`;
+  }
+  const cards = artists
+    .map(
+      (a) => `
+        <a class="artist-card" href="artist.html?name=${DataCore.artistSlug(a.name)}">
+          <div class="name display">${DataCore.escapeHtml(a.name)}</div>
+          <div class="meta"><span class="count">${a.plays.toLocaleString()}</span> plays · ${(a.ms / 1000 / 60 / 60).toFixed(1)}h</div>
+        </a>
+      `
+    )
+    .join("");
+  return `<div class="artist-grid">${cards}</div>`;
+}
+
+function renderPage(artists) {
+  document.getElementById("content").innerHTML = `
+    <section class="block">
+      <div class="heading"><h2>${artists.length.toLocaleString()} artists</h2></div>
+      <div id="artist-grid-container">${renderGrid(artists)}</div>
+    </section>
+    <footer>Ranked by total logged plays across the full archive.</footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    const entries = await DataCore.loadAllEntries(DATA_BASE);
+    if (entries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+    allArtists = aggregateArtists(entries);
+    renderPage(allArtists);
+
+    document.getElementById("search-box").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = q ? allArtists.filter((a) => a.name.toLowerCase().includes(q)) : allArtists;
+      document.getElementById("artist-grid-container").innerHTML = renderGrid(filtered);
+    });
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
