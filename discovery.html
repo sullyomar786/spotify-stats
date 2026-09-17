@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Discovery — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="artists.html">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Discovery</h1>
+    <p>When new artists entered the rotation, and the days you played something on repeat.</p>
+  </div>
+
+  <div id="content">
+    <div class="status"><span class="display">Tracing first plays.</span> Working out when each artist first showed up.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+const DATA_BASE = "data/";
+
+function findFirstPlays(entries) {
+  const firstPlay = new Map(); // artist -> earliest played_at
+  for (const e of entries) {
+    if (!e.artist) continue;
+    if (!firstPlay.has(e.artist) || e.played_at < firstPlay.get(e.artist)) {
+      firstPlay.set(e.artist, e.played_at);
+    }
+  }
+  return [...firstPlay.entries()].sort((a, b) => b[1] - a[1]); // newest discovery first
+}
+
+function findBingeDays(entries) {
+  // Group by day + track, find days where the same track was played 4+ times.
+  const dayTrackCounts = new Map(); // "YYYY-MM-DD|track|artist" -> count
+  for (const e of entries) {
+    if (!e.track) continue;
+    const key = `${DataCore.dayKey(e.played_at)}|${e.track}|${e.artist || ""}`;
+    dayTrackCounts.set(key, (dayTrackCounts.get(key) || 0) + 1);
+  }
+  const binges = [...dayTrackCounts.entries()]
+    .filter(([, count]) => count >= 4)
+    .map(([key, count]) => {
+      const [day, track, artist] = key.split("|");
+      return { day, track, artist, count };
+    })
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+  return binges;
+}
+
+function findDrySpells(entries) {
+  // Find gaps of 5+ days with zero logged plays, within the data's actual span.
+  const days = [...new Set(entries.map((e) => DataCore.dayKey(e.played_at)))].sort();
+  if (days.length < 2) return [];
+
+  const gaps = [];
+  for (let i = 1; i < days.length; i++) {
+    const prev = new Date(days[i - 1] + "T00:00:00Z");
+    const cur = new Date(days[i] + "T00:00:00Z");
+    const gapDays = Math.round((cur - prev) / (1000 * 60 * 60 * 24));
+    if (gapDays >= 5) {
+      gaps.push({ from: days[i - 1], to: days[i], gapDays });
+    }
+  }
+  return gaps.sort((a, b) => b.gapDays - a.gapDays).slice(0, 8);
+}
+
+function fmtDay(dayStr) {
+  return new Date(dayStr + "T00:00:00Z").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function render(entries) {
+  const discoveries = findFirstPlays(entries).slice(0, 20);
+  const binges = findBingeDays(entries);
+  const drySpells = findDrySpells(entries);
+
+  const discoveryHtml = discoveries
+    .map(
+      (d) => `
+        <div class="timeline-item">
+          <div class="date">${fmtDay(DataCore.dayKey(d[1]))}</div>
+          <div class="text">First played <a class="accent" href="artist.html?name=${DataCore.artistSlug(d[0])}">${DataCore.escapeHtml(d[0])}</a></div>
+        </div>
+      `
+    )
+    .join("");
+
+  const bingeHtml = binges.length
+    ? binges
+        .map(
+          (b) => `
+            <div class="timeline-item">
+              <div class="date">${fmtDay(b.day)}</div>
+              <div class="text">Played <span class="accent">${DataCore.escapeHtml(b.track)}</span> ${b.count} times in one day</div>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="story-sub">No days found with 4+ repeat plays of the same track.</p>`;
+
+  const drySpellHtml = drySpells.length
+    ? drySpells
+        .map(
+          (g) => `
+            <div class="timeline-item">
+              <div class="date">${fmtDay(g.from)} → ${fmtDay(g.to)}</div>
+              <div class="text"><span class="accent">${g.gapDays} days</span> with no logged plays</div>
+            </div>
+          `
+        )
+        .join("")
+    : `<p class="story-sub">No gaps of 5+ days found — listening has been fairly continuous.</p>`;
+
+  document.getElementById("content").innerHTML = `
+    <section class="block">
+      <div class="heading"><h2>Recent discoveries</h2><span class="sub">most recently first-played artists</span></div>
+      <div class="timeline">${discoveryHtml}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Binge days</h2><span class="sub">same track, 4+ times in one day</span></div>
+      <div class="timeline">${bingeHtml}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Dry spells</h2><span class="sub">longest stretches with no logged plays</span></div>
+      <div class="timeline">${drySpellHtml}</div>
+    </section>
+
+    <footer>Discovery dates reflect the earliest logged play in the archive, which may be later than when you first actually heard an artist if it predates your data.</footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    const entries = await DataCore.loadAllEntries(DATA_BASE);
+    if (entries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+    render(entries);
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
