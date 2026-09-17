@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Artist — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="artists.html" class="active">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div id="content">
+    <div class="status"><span class="display">Looking them up.</span> Pulling their full history.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script>
+const DATA_BASE = "data/";
+
+function getArtistParam() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("name");
+}
+
+function render(artistName, entries) {
+  const totalPlays = entries.length;
+  const totalMs = entries.reduce((sum, e) => sum + DataCore.playedMs(e), 0);
+  const firstPlay = entries.reduce((min, e) => Math.min(min, e.played_at), Infinity);
+  const lastPlay = entries.reduce((max, e) => Math.max(max, e.played_at), 0);
+
+  const trackCounts = new Map();
+  for (const e of entries) {
+    if (!e.track) continue;
+    trackCounts.set(e.track, (trackCounts.get(e.track) || 0) + 1);
+  }
+  const topTracks = [...trackCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  const byMonth = DataCore.groupByMonth(entries);
+  const months = [...byMonth.keys()];
+  const monthlyPlays = months.map((m) => byMonth.get(m).length);
+  const monthLabels = months.map((key) => {
+    const [y, mo] = key.split("-");
+    return new Date(Date.UTC(+y, +mo - 1, 1)).toLocaleDateString(undefined, { month: "short", year: "2-digit" });
+  });
+
+  const skipEligible = entries.filter((e) => e.skipped !== null && e.skipped !== undefined);
+  const skipRate = skipEligible.length > 0
+    ? Math.round((skipEligible.filter((e) => e.skipped).length / skipEligible.length) * 100)
+    : null;
+
+  const firstDate = new Date(firstPlay).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+  const lastDate = new Date(lastPlay).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+
+  document.getElementById("content").innerHTML = `
+    <div class="page-head">
+      <h1 class="display">${DataCore.escapeHtml(artistName)}</h1>
+      <p>First played ${firstDate}. Most recently played ${lastDate}.</p>
+    </div>
+
+    <div class="stat-row" style="margin-top:0; margin-bottom:56px;">
+      <div class="stat"><div class="num display">${totalPlays.toLocaleString()}</div><div class="cap">total plays</div></div>
+      <div class="stat"><div class="num display">${(totalMs / 1000 / 60 / 60).toFixed(1)}</div><div class="cap">hours</div></div>
+      <div class="stat"><div class="num display">${trackCounts.size.toLocaleString()}</div><div class="cap">distinct tracks</div></div>
+      <div class="stat"><div class="num display">${skipRate !== null ? skipRate + "%" : "—"}</div><div class="cap">skip rate</div></div>
+    </div>
+
+    <section class="block">
+      <div class="heading"><h2>Plays over time</h2></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: monthlyPlays, labels: monthLabels })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Top tracks</h2></div>
+      <div class="ranked-list">
+        <ol>
+          ${topTracks.map(([name, count]) => `<li><span class="name">${DataCore.escapeHtml(name)}</span><span class="count">${count.toLocaleString()}</span></li>`).join("")}
+        </ol>
+      </div>
+    </section>
+
+    <footer><a href="artists.html">← back to all artists</a></footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  const artistName = getArtistParam();
+  if (!artistName) {
+    DataCore.renderError("content", new Error("No artist specified"));
+    return;
+  }
+  try {
+    const entries = await DataCore.loadAllEntries(DATA_BASE);
+    const artistEntries = entries.filter((e) => e.artist === artistName);
+    if (artistEntries.length === 0) {
+      DataCore.renderError("content", new Error(`No plays found for "${artistName}"`));
+      return;
+    }
+    render(artistName, artistEntries);
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
