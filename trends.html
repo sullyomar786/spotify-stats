@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trends — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="artists.html">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Trends</h1>
+    <p>How your listening has moved over time — month by month, and how recent periods compare to what came before.</p>
+  </div>
+
+  <div id="content">
+    <div class="status"><span class="display">Charting the shape of it.</span> Crunching monthly totals.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script>
+const DATA_BASE = "data/";
+
+function buildMonthlySeries(entries) {
+  const byMonth = DataCore.groupByMonth(entries);
+  const months = [...byMonth.keys()];
+  const plays = [];
+  const hours = [];
+  const artistsPerMonth = [];
+
+  for (const m of months) {
+    const monthEntries = byMonth.get(m);
+    plays.push(monthEntries.length);
+    const ms = monthEntries.reduce((sum, e) => sum + DataCore.playedMs(e), 0);
+    hours.push(ms / 1000 / 60 / 60);
+    artistsPerMonth.push(new Set(monthEntries.map((e) => e.artist).filter(Boolean)).size);
+  }
+
+  return { months, plays, hours, artistsPerMonth };
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  const d = new Date(Date.UTC(+y, +m - 1, 1));
+  return d.toLocaleDateString(undefined, { month: "short", year: "2-digit" });
+}
+
+function pctChange(current, previous) {
+  if (previous === 0) return current > 0 ? Infinity : 0;
+  return ((current - previous) / previous) * 100;
+}
+
+function renderCallout(label, current, previous, unit, fmt) {
+  const change = pctChange(current, previous);
+  const isUp = change > 0;
+  const isFinite = Number.isFinite(change);
+  const arrow = isFinite ? (isUp ? "↑" : change < 0 ? "↓" : "→") : "↑";
+  const changeText = isFinite ? `${arrow} ${Math.abs(Math.round(change))}%` : "new";
+  const cls = isUp || !isFinite ? "up" : change < 0 ? "down" : "";
+
+  return `
+    <div class="callout">
+      <div class="delta ${cls}">${fmt(current)}${unit}</div>
+      <div class="desc">${label} — ${changeText} vs. previous period (${fmt(previous)}${unit})</div>
+    </div>
+  `;
+}
+
+function render(entries) {
+  const { months, plays, hours, artistsPerMonth } = buildMonthlySeries(entries);
+  const labels = months.map(monthLabel);
+
+  // Current month vs previous month
+  const n = months.length;
+  const curMonth = { plays: plays[n - 1] || 0, hours: hours[n - 1] || 0, artists: artistsPerMonth[n - 1] || 0 };
+  const prevMonth = { plays: plays[n - 2] || 0, hours: hours[n - 2] || 0, artists: artistsPerMonth[n - 2] || 0 };
+
+  // This year vs last year (by calendar year, summing full months present)
+  const now = new Date();
+  const thisYear = now.getUTCFullYear();
+  const lastYear = thisYear - 1;
+  const yearTotals = { [thisYear]: { plays: 0, hours: 0 }, [lastYear]: { plays: 0, hours: 0 } };
+  months.forEach((m, i) => {
+    const y = +m.split("-")[0];
+    if (yearTotals[y]) {
+      yearTotals[y].plays += plays[i];
+      yearTotals[y].hours += hours[i];
+    }
+  });
+
+  // Biggest month
+  let biggestIdx = 0;
+  for (let i = 1; i < plays.length; i++) if (plays[i] > plays[biggestIdx]) biggestIdx = i;
+  const biggestMonth = months[biggestIdx];
+  const biggestLabel = biggestMonth ? monthLabel(biggestMonth) : "—";
+
+  document.getElementById("content").innerHTML = `
+    <section class="block">
+      <div class="heading"><h2>Plays per month</h2><span class="sub">${months.length} months tracked</span></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: plays, labels, valueFormatter: (v) => Math.round(v).toLocaleString() })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Hours per month</h2></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: hours, labels, valueFormatter: (v) => Math.round(v) + "h" })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Distinct artists per month</h2><span class="sub">breadth of listening, not just volume</span></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: artistsPerMonth, labels, valueFormatter: (v) => Math.round(v) })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>This month vs last</h2></div>
+      <div class="callout-grid">
+        ${renderCallout("Plays", curMonth.plays, prevMonth.plays, "", (v) => Math.round(v).toLocaleString())}
+        ${renderCallout("Hours", curMonth.hours, prevMonth.hours, "h", (v) => Math.round(v))}
+        ${renderCallout("Distinct artists", curMonth.artists, prevMonth.artists, "", (v) => Math.round(v))}
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>${thisYear} vs ${lastYear}</h2><span class="sub">year to date</span></div>
+      <div class="callout-grid">
+        ${renderCallout("Plays", yearTotals[thisYear].plays, yearTotals[lastYear].plays, "", (v) => Math.round(v).toLocaleString())}
+        ${renderCallout("Hours", yearTotals[thisYear].hours, yearTotals[lastYear].hours, "h", (v) => Math.round(v).toLocaleString())}
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Standout month</h2></div>
+      <p class="story-line"><span class="accent">${biggestLabel}</span> was your biggest month, with ${plays[biggestIdx]?.toLocaleString() || 0} plays.</p>
+    </section>
+
+    <footer>Monthly figures are grouped by when each track was played, in UTC.</footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    const entries = await DataCore.loadAllEntries(DATA_BASE);
+    if (entries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+    render(entries);
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
