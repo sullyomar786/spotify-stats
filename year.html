@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Year in Review — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .year-picker {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .year-picker button {
+    background: var(--black-lift);
+    border: 1px solid var(--rule);
+    color: var(--text-mid);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .year-picker button:hover { color: var(--text); background: var(--rule); }
+  .year-picker button.active {
+    color: var(--red);
+    background: var(--red-glow);
+    border-color: var(--red-dim);
+  }
+  .year-progress {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    margin-top: -32px;
+    margin-bottom: 48px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="year.html">Year in Review</a>
+      <a href="artists.html">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Year in Review</h1>
+    <p>A full year, totalled up. Pick a year to see how it went.</p>
+  </div>
+
+  <div id="year-picker" class="year-picker"></div>
+
+  <div id="content">
+    <div class="status"><span class="display">Adding up the year.</span> Totalling plays, hours, and artists.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script>
+const DATA_BASE = "data/";
+let allEntries = [];
+let availableYears = [];
+let selectedYear = null;
+
+function getYear(ts) {
+  return new Date(ts).getUTCFullYear();
+}
+
+function monthLabelShort(monthIndex) {
+  return new Date(Date.UTC(2000, monthIndex, 1)).toLocaleDateString(undefined, { month: "short" });
+}
+
+function computeYearStats(entries, year) {
+  const yearEntries = entries.filter((e) => getYear(e.played_at) === year);
+  const totalPlays = yearEntries.length;
+  const totalMs = yearEntries.reduce((sum, e) => sum + DataCore.playedMs(e), 0);
+
+  const artistCounts = new Map();
+  const trackCounts = new Map();
+  const monthlyPlays = Array(12).fill(0);
+  const monthlyHours = Array(12).fill(0);
+  let skipCount = 0, skipEligible = 0;
+
+  for (const e of yearEntries) {
+    if (e.artist) artistCounts.set(e.artist, (artistCounts.get(e.artist) || 0) + 1);
+    if (e.track) {
+      const key = e.track + " — " + (e.artist || "Unknown");
+      trackCounts.set(key, (trackCounts.get(key) || 0) + 1);
+    }
+    const m = new Date(e.played_at).getUTCMonth();
+    monthlyPlays[m]++;
+    monthlyHours[m] += DataCore.playedMs(e) / 1000 / 60 / 60;
+    if (e.skipped !== null && e.skipped !== undefined) {
+      skipEligible++;
+      if (e.skipped) skipCount++;
+    }
+  }
+
+  const topArtists = [...artistCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const topTracks = [...trackCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  let peakMonthIdx = 0;
+  for (let i = 1; i < 12; i++) if (monthlyPlays[i] > monthlyPlays[peakMonthIdx]) peakMonthIdx = i;
+
+  return {
+    year,
+    totalPlays,
+    totalHours: totalMs / 1000 / 60 / 60,
+    uniqueArtists: artistCounts.size,
+    uniqueTracks: trackCounts.size,
+    topArtists,
+    topTracks,
+    monthlyPlays,
+    monthlyHours,
+    skipRate: skipEligible > 0 ? Math.round((skipCount / skipEligible) * 100) : null,
+    peakMonthIdx,
+    hasData: totalPlays > 0,
+  };
+}
+
+function renderYearPicker() {
+  const buttons = availableYears
+    .map((y) => `<button data-year="${y}" class="${y === selectedYear ? "active" : ""}">${y}</button>`)
+    .join("");
+  document.getElementById("year-picker").innerHTML = buttons;
+
+  document.querySelectorAll("#year-picker button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedYear = parseInt(btn.dataset.year, 10);
+      renderYearPicker();
+      renderYear();
+    });
+  });
+}
+
+function renderRankedList(title, entries, formatFn) {
+  let html = `<div class="ranked-list"><h3>${title}</h3><ol>`;
+  entries.forEach(([name, count]) => {
+    html += `<li><span class="name">${DataCore.escapeHtml(name)}</span><span class="count">${formatFn(count)}</span></li>`;
+  });
+  html += "</ol></div>";
+  return html;
+}
+
+function renderYear() {
+  const stats = computeYearStats(allEntries, selectedYear);
+
+  if (!stats.hasData) {
+    document.getElementById("content").innerHTML = `
+      <div class="status">
+        <span class="display">Nothing logged for ${selectedYear}.</span>
+        No plays found in this year's range.
+      </div>
+    `;
+    return;
+  }
+
+  const now = new Date();
+  const isCurrentYear = selectedYear === now.getUTCFullYear();
+  const daysElapsed = isCurrentYear
+    ? Math.ceil((now - new Date(Date.UTC(selectedYear, 0, 1))) / (1000 * 60 * 60 * 24))
+    : null;
+
+  const monthLabels = Array.from({ length: 12 }, (_, i) => monthLabelShort(i));
+  const peakLabel = monthLabelShort(stats.peakMonthIdx);
+
+  document.getElementById("content").innerHTML = `
+    ${isCurrentYear ? `<p class="year-progress">Year in progress — ${daysElapsed} days in so far.</p>` : ""}
+
+    <div class="hero count-up" style="margin-bottom:56px;">
+      <p class="figure display">${DataCore.fmtNum(stats.totalHours)}<em>h</em></p>
+      <p class="label">listened in ${stats.year}, across ${stats.uniqueArtists.toLocaleString()} artists.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="num display">${stats.totalPlays.toLocaleString()}</div><div class="cap">total plays</div></div>
+        <div class="stat"><div class="num display">${stats.uniqueTracks.toLocaleString()}</div><div class="cap">distinct tracks</div></div>
+        <div class="stat"><div class="num display">${peakLabel}</div><div class="cap">peak month</div></div>
+        <div class="stat"><div class="num display">${stats.skipRate !== null ? stats.skipRate + "%" : "—"}</div><div class="cap">skip rate</div></div>
+      </div>
+    </div>
+
+    <section class="block">
+      <div class="heading"><h2>Plays by month</h2></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyPlays, labels: monthLabels, valueFormatter: (v) => Math.round(v).toLocaleString() })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>Hours by month</h2></div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyHours, labels: monthLabels, valueFormatter: (v) => Math.round(v) + "h" })}</div>
+    </section>
+
+    <section class="block">
+      <div class="heading"><h2>${stats.year} in review</h2></div>
+      <div class="ranked-pair">
+        ${renderRankedList("Top artists", stats.topArtists, (c) => c.toLocaleString())}
+        ${renderRankedList("Top tracks", stats.topTracks, (c) => c.toLocaleString())}
+      </div>
+    </section>
+
+    <footer>Figures for ${stats.year}${isCurrentYear ? " so far" : ""}, grouped in UTC.</footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    allEntries = await DataCore.loadAllEntries(DATA_BASE);
+    if (allEntries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+
+    const yearsSet = new Set(allEntries.map((e) => getYear(e.played_at)));
+    availableYears = [...yearsSet].sort((a, b) => b - a); // newest first
+    selectedYear = availableYears[0];
+
+    renderYearPicker();
+    renderYear();
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
