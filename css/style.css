@@ -324,6 +324,55 @@ section.block .heading .sub {
 .chart-bar { fill: var(--text-dim); }
 .chart-bar.highlight { fill: var(--red); }
 
+.chart-hit-target {
+  fill: transparent;
+  cursor: pointer;
+  transition: fill 0.1s;
+}
+
+.chart-hit-target:hover,
+.chart-hit-target:focus {
+  fill: var(--red-glow);
+  outline: none;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 1000;
+  background: var(--black-lift2);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.82rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.12s, transform 0.12s;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.chart-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chart-tooltip-label {
+  display: block;
+  color: var(--text-mid);
+  font-size: 0.72rem;
+  margin-bottom: 2px;
+}
+
+.chart-tooltip-value {
+  display: block;
+  color: var(--text);
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 /* ---------- Comparison callouts ---------- */
 
 .callout-grid {
