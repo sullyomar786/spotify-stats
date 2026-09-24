@@ -85,7 +85,7 @@ function render(artistName, entries) {
 
     <section class="block">
       <div class="heading"><h2>Plays over time</h2></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: monthlyPlays, labels: monthLabels })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: monthlyPlays, labels: monthLabels, valueFormatter: (v) => Math.round(v).toLocaleString(), tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
@@ -99,6 +99,8 @@ function render(artistName, entries) {
 
     <footer><a href="artists.html">← back to all artists</a></footer>
   `;
+
+  Charts.attachTooltips(document.getElementById("content"));
 }
 
 (async function init() {
