@@ -117,17 +117,17 @@ function render(entries) {
   document.getElementById("content").innerHTML = `
     <section class="block">
       <div class="heading"><h2>Plays per month</h2><span class="sub">${months.length} months tracked</span></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: plays, labels, valueFormatter: (v) => Math.round(v).toLocaleString() })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: plays, labels, valueFormatter: (v) => Math.round(v).toLocaleString(), tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
       <div class="heading"><h2>Hours per month</h2></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: hours, labels, valueFormatter: (v) => Math.round(v) + "h" })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: hours, labels, valueFormatter: (v) => Math.round(v) + "h", tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
       <div class="heading"><h2>Distinct artists per month</h2><span class="sub">breadth of listening, not just volume</span></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: artistsPerMonth, labels, valueFormatter: (v) => Math.round(v) })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: artistsPerMonth, labels, valueFormatter: (v) => Math.round(v), tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
@@ -154,6 +154,8 @@ function render(entries) {
 
     <footer>Monthly figures are grouped by when each track was played, in UTC.</footer>
   `;
+
+  Charts.attachTooltips(document.getElementById("content"));
 }
 
 (async function init() {
