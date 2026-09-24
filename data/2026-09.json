@@ -33766,5 +33766,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790276627096,
+    "track": "Pray For Me",
+    "artist": "The Weeknd, Kendrick Lamar",
+    "album": null,
+    "duration_ms": 211420,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790276813225,
+    "track": "hey now (feat. dody6)",
+    "artist": "Kendrick Lamar, Dody6",
+    "album": null,
+    "duration_ms": 217478,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
