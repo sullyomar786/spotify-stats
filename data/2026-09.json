@@ -33028,5 +33028,23 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790234091158,
+    "track": "One Of The Girls (with JENNIE, Lily Rose Depp)",
+    "artist": "The Weeknd, JENNIE, Lily-Rose Depp",
+    "album": null,
+    "duration_ms": 244684,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
