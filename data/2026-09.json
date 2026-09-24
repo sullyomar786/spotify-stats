@@ -34594,5 +34594,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790292573319,
+    "track": "The Birds Pt. 1",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 214186,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790292573394,
+    "track": "Moth To A Flame (with The Weeknd)",
+    "artist": "Swedish House Mafia, The Weeknd",
+    "album": null,
+    "duration_ms": 234000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
