@@ -195,12 +195,12 @@ function renderYear() {
 
     <section class="block">
       <div class="heading"><h2>Plays by month</h2></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyPlays, labels: monthLabels, valueFormatter: (v) => Math.round(v).toLocaleString() })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyPlays, labels: monthLabels, valueFormatter: (v) => Math.round(v).toLocaleString(), tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
       <div class="heading"><h2>Hours by month</h2></div>
-      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyHours, labels: monthLabels, valueFormatter: (v) => Math.round(v) + "h" })}</div>
+      <div class="chart-wrap">${Charts.lineAreaChart({ values: stats.monthlyHours, labels: monthLabels, valueFormatter: (v) => Math.round(v) + "h", tooltipLabel: (lab) => lab })}</div>
     </section>
 
     <section class="block">
@@ -213,6 +213,8 @@ function renderYear() {
 
     <footer>Figures for ${stats.year}${isCurrentYear ? " so far" : ""}, grouped in UTC.</footer>
   `;
+
+  Charts.attachTooltips(document.getElementById("content"));
 }
 
 (async function init() {
