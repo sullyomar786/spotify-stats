@@ -43,16 +43,26 @@ function aggregate(entries) {
   const totalPlays = entries.length;
   let totalMsPlayed = 0;
   const artistCounts = new Map();
-  const trackCounts = new Map();
+  const trackCounts = new Map(); // key: "track — primaryArtist", value: { count, displayArtist }
   const hourDayGrid = Array.from({ length: 7 }, () => Array(24).fill(0));
   let liveCount = 0, extCount = 0, skipCount = 0, skipEligible = 0;
 
+  const knownArtistNames = DataCore.buildKnownArtistNames(entries);
+
   for (const e of entries) {
     totalMsPlayed += DataCore.playedMs(e);
-    if (e.artist) artistCounts.set(e.artist, (artistCounts.get(e.artist) || 0) + 1);
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    if (artist) artistCounts.set(artist, (artistCounts.get(artist) || 0) + 1);
     if (e.track) {
-      const key = e.track + " — " + (e.artist || "Unknown");
-      trackCounts.set(key, (trackCounts.get(key) || 0) + 1);
+      const key = e.track + " — " + (artist || "Unknown");
+      const existing = trackCounts.get(key);
+      // Prefer the fullest credit string available for display (a
+      // live_poll entry's joined artist string is more informative than
+      // extended_history's primary-only name for a collab track).
+      const displayArtist = existing && existing.displayArtist.length >= (e.artist || "").length
+        ? existing.displayArtist
+        : (e.artist || "Unknown");
+      trackCounts.set(key, { count: (existing?.count || 0) + 1, displayArtist });
     }
     const d = new Date(e.played_at);
     hourDayGrid[d.getUTCDay()][d.getUTCHours()]++;
@@ -65,18 +75,25 @@ function aggregate(entries) {
   }
 
   const topArtists = [...artistCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const topTracks = [...trackCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const topTracks = [...trackCounts.entries()]
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 8)
+    .map(([key, val]) => {
+      const track = key.split(" — ")[0];
+      return [`${track} — ${val.displayArtist}`, val.count];
+    });
 
   const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
   const recentEntries = entries.filter((e) => e.played_at >= sevenDaysAgo);
   const recentTrackCounts = new Map();
   const recentArtistCounts = new Map();
   for (const e of recentEntries) {
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
     if (e.track) {
-      const key = e.track + " — " + (e.artist || "Unknown");
+      const key = e.track + " — " + (artist || "Unknown");
       recentTrackCounts.set(key, (recentTrackCounts.get(key) || 0) + 1);
     }
-    if (e.artist) recentArtistCounts.set(e.artist, (recentArtistCounts.get(e.artist) || 0) + 1);
+    if (artist) recentArtistCounts.set(artist, (recentArtistCounts.get(artist) || 0) + 1);
   }
   const topRecentTrack = [...recentTrackCounts.entries()].sort((a, b) => b[1] - a[1])[0];
   const topRecentArtist = [...recentArtistCounts.entries()].sort((a, b) => b[1] - a[1])[0];
@@ -158,7 +175,7 @@ function render(stats) {
 
   document.getElementById("content").innerHTML = `
     <div class="hero count-up">
-      <p class="figure display">${DataCore.fmtNum(stats.totalHours)}<em>h</em></p>
+      <p class="figure display">${DataCore.fmtNum(stats.totalHours * 60)}<em>min</em></p>
       <p class="label">listened across ${stats.spanDays.toLocaleString()} days, from ${stats.uniqueArtists.toLocaleString()} artists.</p>
       <div class="stat-row">
         <div class="stat"><div class="num display">${stats.totalPlays.toLocaleString()}</div><div class="cap">total plays</div></div>
