@@ -37780,5 +37780,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790541568473,
+    "track": "$ex Appeal (feat. Too $hort)",
+    "artist": "Baby Keem, Too $hort",
+    "album": null,
+    "duration_ms": 184930,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790541709204,
+    "track": "squabble up",
+    "artist": "Kendrick Lamar",
+    "album": null,
+    "duration_ms": 157992,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
