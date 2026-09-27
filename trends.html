@@ -47,13 +47,17 @@ function buildMonthlySeries(entries) {
   const plays = [];
   const hours = [];
   const artistsPerMonth = [];
+  const knownArtistNames = DataCore.buildKnownArtistNames(entries);
 
   for (const m of months) {
     const monthEntries = byMonth.get(m);
     plays.push(monthEntries.length);
     const ms = monthEntries.reduce((sum, e) => sum + DataCore.playedMs(e), 0);
     hours.push(ms / 1000 / 60 / 60);
-    artistsPerMonth.push(new Set(monthEntries.map((e) => e.artist).filter(Boolean)).size);
+    const artistSet = new Set(
+      monthEntries.map((e) => DataCore.primaryArtist(e, knownArtistNames)).filter(Boolean)
+    );
+    artistsPerMonth.push(artistSet.size);
   }
 
   return { months, plays, hours, artistsPerMonth };
