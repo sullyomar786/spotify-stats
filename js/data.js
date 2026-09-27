@@ -63,6 +63,41 @@ const DataCore = (function () {
     return e.ms_played ?? e.duration_ms ?? 0;
   }
 
+  // Returns just the primary artist for an entry, for grouping/counting
+  // purposes. The two data sources represent multi-artist tracks
+  // differently: Spotify's Extended History export stores whatever Spotify
+  // considers the primary artist verbatim — which is sometimes itself a
+  // name containing a comma (e.g. "Tyler, The Creator") — while the
+  // live-poll API returns every credited artist joined into one string
+  // with ", " (e.g. "The Weeknd, JENNIE, Lily-Rose Depp"), primary artist
+  // always first. A plain "split on first comma" would wrongly break real
+  // comma-containing names, so this instead builds a reference set of
+  // known real artist names (every artist string ever seen from an
+  // extended_history entry, since that source never joins multiple
+  // artists together) and only splits a live_poll entry's artist string
+  // if the full string ISN'T already a known real name.
+  //
+  // knownArtistNames: a Set built once per dataset via
+  // buildKnownArtistNames(entries) and passed in on every call.
+  function primaryArtist(e, knownArtistNames) {
+    if (!e.artist) return e.artist;
+    if (e.source !== "live_poll") return e.artist; // extended_history is always the real name already
+    if (knownArtistNames && knownArtistNames.has(e.artist)) return e.artist; // real name that happens to contain a comma
+    const commaIdx = e.artist.indexOf(",");
+    return commaIdx === -1 ? e.artist : e.artist.slice(0, commaIdx).trim();
+  }
+
+  // Builds the reference set primaryArtist() needs: every distinct artist
+  // string that has ever appeared on an extended_history entry. Call once
+  // per full dataset (not per entry) and pass the result to primaryArtist.
+  function buildKnownArtistNames(entries) {
+    const set = new Set();
+    for (const e of entries) {
+      if (e.source === "extended_history" && e.artist) set.add(e.artist);
+    }
+    return set;
+  }
+
   function renderError(containerId, err) {
     document.getElementById(containerId).innerHTML = `
       <div class="status">
@@ -92,6 +127,8 @@ const DataCore = (function () {
     artistSlug,
     groupByMonth,
     playedMs,
+    primaryArtist,
+    buildKnownArtistNames,
     renderError,
     setActiveNav,
   };
