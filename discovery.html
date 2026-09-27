@@ -40,23 +40,28 @@
 <script>
 const DATA_BASE = "data/";
 
-function findFirstPlays(entries) {
+function findFirstPlays(entries, knownArtistNames) {
   const firstPlay = new Map(); // artist -> earliest played_at
   for (const e of entries) {
-    if (!e.artist) continue;
-    if (!firstPlay.has(e.artist) || e.played_at < firstPlay.get(e.artist)) {
-      firstPlay.set(e.artist, e.played_at);
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    if (!artist) continue;
+    if (!firstPlay.has(artist) || e.played_at < firstPlay.get(artist)) {
+      firstPlay.set(artist, e.played_at);
     }
   }
   return [...firstPlay.entries()].sort((a, b) => b[1] - a[1]); // newest discovery first
 }
 
-function findBingeDays(entries) {
+function findBingeDays(entries, knownArtistNames) {
   // Group by day + track, find days where the same track was played 4+ times.
+  // Grouped by primary artist so the same song doesn't fragment across a
+  // binge day just because some plays came from the API source (full
+  // collab credit string) and others from the export (primary artist only).
   const dayTrackCounts = new Map(); // "YYYY-MM-DD|track|artist" -> count
   for (const e of entries) {
     if (!e.track) continue;
-    const key = `${DataCore.dayKey(e.played_at)}|${e.track}|${e.artist || ""}`;
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    const key = `${DataCore.dayKey(e.played_at)}|${e.track}|${artist || ""}`;
     dayTrackCounts.set(key, (dayTrackCounts.get(key) || 0) + 1);
   }
   const binges = [...dayTrackCounts.entries()]
@@ -92,8 +97,9 @@ function fmtDay(dayStr) {
 }
 
 function render(entries) {
-  const discoveries = findFirstPlays(entries).slice(0, 20);
-  const binges = findBingeDays(entries);
+  const knownArtistNames = DataCore.buildKnownArtistNames(entries);
+  const discoveries = findFirstPlays(entries, knownArtistNames).slice(0, 20);
+  const binges = findBingeDays(entries, knownArtistNames);
   const drySpells = findDrySpells(entries);
 
   const discoveryHtml = discoveries
