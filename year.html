@@ -49,6 +49,7 @@
       <a href="index.html">Overview</a>
       <a href="trends.html">Trends</a>
       <a href="year.html">Year in Review</a>
+      <a href="insights.html">Insights</a>
       <a href="artists.html">Artists</a>
       <a href="history.html">History</a>
       <a href="discovery.html">Discovery</a>
@@ -185,7 +186,7 @@ function renderYear() {
     ${isCurrentYear ? `<p class="year-progress">Year in progress — ${daysElapsed} days in so far.</p>` : ""}
 
     <div class="hero count-up" style="margin-bottom:56px;">
-      <p class="figure display">${DataCore.fmtNum(stats.totalHours)}<em>h</em></p>
+      <p class="figure display">${DataCore.fmtNum(stats.totalHours * 60)}<em>min</em></p>
       <p class="label">listened in ${stats.year}, across ${stats.uniqueArtists.toLocaleString()} artists.</p>
       <div class="stat-row">
         <div class="stat"><div class="num display">${stats.totalPlays.toLocaleString()}</div><div class="cap">total plays</div></div>
