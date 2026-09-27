@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Insights — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .insight-block {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .insight-block:last-of-type {
+    border-bottom: none;
+  }
+  .insight-eyebrow {
+    font-size: 0.78rem;
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 10px;
+  }
+  .insight-headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    line-height: 1.3;
+    margin: 0 0 16px;
+    max-width: 42ch;
+  }
+  .insight-headline .accent { color: var(--red); }
+  .insight-body {
+    font-size: 1rem;
+    color: var(--text-mid);
+    max-width: 62ch;
+    line-height: 1.6;
+  }
+  .insight-body strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .insight-body + .insight-body {
+    margin-top: 12px;
+  }
+  .shift-bars {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    max-width: 500px;
+  }
+  .shift-bar {
+    flex: 1;
+  }
+  .shift-bar .track {
+    height: 60px;
+    background: var(--rule);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  .shift-bar .fill {
+    width: 100%;
+    background: var(--text-dim);
+    border-radius: 4px 4px 0 0;
+  }
+  .shift-bar .fill.then { background: var(--text-dim); }
+  .shift-bar .fill.now { background: var(--red); }
+  .shift-bar .label {
+    font-size: 0.72rem;
+    color: var(--text-mid);
+    text-align: center;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="year.html">Year in Review</a>
+      <a href="insights.html">Insights</a>
+      <a href="artists.html">Artists</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Insights</h1>
+    <p>What the numbers actually suggest — read, not just charted.</p>
+  </div>
+
+  <div id="content">
+    <div class="status"><span class="display">Reading between the plays.</span> Working out what's actually changed.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script>
+const DATA_BASE = "data/";
+
+function monthsAgo(n) {
+  const d = new Date();
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() - n);
+  return d.getTime();
+}
+
+function playsInRange(entries, startMs, endMs) {
+  return entries.filter((e) => e.played_at >= startMs && e.played_at < endMs);
+}
+
+function pctChange(current, previous) {
+  if (previous === 0) return current > 0 ? Infinity : 0;
+  return ((current - previous) / previous) * 100;
+}
+
+// ---------- Insight 1: Momentum ----------
+
+function computeMomentum(entries) {
+  const now = Date.now();
+  const threeMoAgo = monthsAgo(3);
+  const sixMoAgo = monthsAgo(6);
+
+  const recent = playsInRange(entries, threeMoAgo, now);
+  const prior = playsInRange(entries, sixMoAgo, threeMoAgo);
+
+  if (recent.length === 0 && prior.length === 0) return null;
+
+  const change = pctChange(recent.length, prior.length);
+  const direction = change > 5 ? "up" : change < -5 ? "down" : "flat";
+
+  return { recentCount: recent.length, priorCount: prior.length, change, direction };
+}
+
+function renderMomentum(m) {
+  if (!m) {
+    return `<p class="insight-body">Not enough history yet to compare recent months against what came before.</p>`;
+  }
+
+  let headline, body;
+  if (m.direction === "up") {
+    headline = `You've been listening <span class="accent">${Math.round(m.change)}% more</span> the last 3 months.`;
+    body = `${m.recentCount.toLocaleString()} plays in the last 3 months, up from ${m.priorCount.toLocaleString()} in the 3 months before that. Whatever's been going on lately, it's had you reaching for music more often.`;
+  } else if (m.direction === "down") {
+    headline = `Listening has dropped <span class="accent">${Math.round(Math.abs(m.change))}%</span> over the last 3 months.`;
+    body = `${m.recentCount.toLocaleString()} plays in the last 3 months, down from ${m.priorCount.toLocaleString()} before that. Not necessarily a bad thing — just a real shift in how much music's been part of the last stretch.`;
+  } else {
+    headline = `Your listening's held <span class="accent">pretty steady</span> the last 3 months.`;
+    body = `${m.recentCount.toLocaleString()} plays in the last 3 months, close to the ${m.priorCount.toLocaleString()} from the 3 months before. No real swing either way.`;
+  }
+
+  return `<h3 class="insight-headline display">${headline}</h3><p class="insight-body">${body}</p>`;
+}
+
+// ---------- Insight 2: Breadth vs depth ----------
+
+function computeBreadth(entries, knownArtistNames) {
+  const now = Date.now();
+  const threeMoAgo = monthsAgo(3);
+  const sixMoAgo = monthsAgo(6);
+
+  const recent = playsInRange(entries, threeMoAgo, now);
+  const prior = playsInRange(entries, sixMoAgo, threeMoAgo);
+
+  if (recent.length === 0) return null;
+
+  const recentArtists = new Set(recent.map((e) => DataCore.primaryArtist(e, knownArtistNames)).filter(Boolean));
+  const priorArtists = new Set(prior.map((e) => DataCore.primaryArtist(e, knownArtistNames)).filter(Boolean));
+
+  const recentRatio = recent.length / Math.max(recentArtists.size, 1);
+  const priorRatio = prior.length > 0 ? prior.length / Math.max(priorArtists.size, 1) : recentRatio;
+
+  return {
+    recentArtistCount: recentArtists.size,
+    priorArtistCount: priorArtists.size,
+    recentPlaysPerArtist: recentRatio,
+    priorPlaysPerArtist: priorRatio,
+  };
+}
+
+function renderBreadth(b) {
+  if (!b) return `<p class="insight-body">Not enough recent data to say yet.</p>`;
+
+  const ratioChange = b.priorPlaysPerArtist > 0 ? pctChange(b.recentPlaysPerArtist, b.priorPlaysPerArtist) : 0;
+  const narrowing = ratioChange > 10;
+  const widening = ratioChange < -10;
+
+  let headline, body;
+  if (narrowing) {
+    headline = `You've been <span class="accent">narrowing in</span> lately, not exploring.`;
+    body = `You're averaging ${b.recentPlaysPerArtist.toFixed(1)} plays per artist over the last 3 months, up from ${b.priorPlaysPerArtist.toFixed(1)} before — fewer new names, more repeat plays of the ones you're already into.`;
+  } else if (widening) {
+    headline = `You've been <span class="accent">branching out</span> more lately.`;
+    body = `${b.recentArtistCount.toLocaleString()} distinct artists in the last 3 months, with plays spread thinner across them than before — more discovery, less repetition.`;
+  } else {
+    headline = `Your mix of <span class="accent">new vs. familiar</span> has stayed pretty consistent.`;
+    body = `${b.recentArtistCount.toLocaleString()} distinct artists over the last 3 months, at a similar plays-per-artist rate to before — no real shift toward exploring more or settling in.`;
+  }
+
+  return `<h3 class="insight-headline display">${headline}</h3><p class="insight-body">${body}</p>`;
+}
+
+// ---------- Insight 3: Rising / fading artists ----------
+
+function computeArtistMomentum(entries, knownArtistNames) {
+  const now = Date.now();
+  const sixWeeksAgo = now - 42 * 24 * 60 * 60 * 1000;
+  const priorStart = now - 12 * 7 * 24 * 60 * 60 * 1000;
+  const priorEnd = sixWeeksAgo;
+
+  const recentCounts = new Map();
+  const priorCounts = new Map();
+
+  for (const e of entries) {
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    if (!artist) continue;
+    if (e.played_at >= sixWeeksAgo && e.played_at <= now) {
+      recentCounts.set(artist, (recentCounts.get(artist) || 0) + 1);
+    } else if (e.played_at >= priorStart && e.played_at < priorEnd) {
+      priorCounts.set(artist, (priorCounts.get(artist) || 0) + 1);
+    }
+  }
+
+  const rising = [];
+  for (const [artist, count] of recentCounts.entries()) {
+    if (count < 3) continue;
+    const priorCount = priorCounts.get(artist) || 0;
+    rising.push({ artist, recentCount: count, priorCount, delta: count - priorCount });
+  }
+  rising.sort((a, b) => b.delta - a.delta);
+
+  const fading = [];
+  for (const [artist, count] of priorCounts.entries()) {
+    if (count < 3) continue;
+    const recentCount = recentCounts.get(artist) || 0;
+    fading.push({ artist, recentCount, priorCount: count, delta: recentCount - count });
+  }
+  fading.sort((a, b) => a.delta - b.delta);
+
+  return { rising: rising.slice(0, 3), fading: fading.slice(0, 3) };
+}
+
+function renderArtistMomentum(am) {
+  if (am.rising.length === 0 && am.fading.length === 0) {
+    return `<p class="insight-body">Not enough recent listening yet to spot any artists moving up or down.</p>`;
+  }
+
+  let body = "";
+  if (am.rising.length > 0) {
+    const top = am.rising[0];
+    const headline = top.priorCount === 0
+      ? `<span class="accent">${DataCore.escapeHtml(top.artist)}</span> has come out of nowhere lately.`
+      : `<span class="accent">${DataCore.escapeHtml(top.artist)}</span> is having a real moment right now.`;
+    body += `<h3 class="insight-headline display">${headline}</h3>`;
+    body += `<p class="insight-body">${top.recentCount} plays in the last 6 weeks, ${top.priorCount === 0 ? "with none in the 6 weeks before that" : `up from ${top.priorCount} before`}.`;
+    if (am.rising.length > 1) {
+      const others = am.rising.slice(1).map((r) => DataCore.escapeHtml(r.artist)).join(", ");
+      body += ` <strong>${others}</strong> ${am.rising.length === 2 ? "has" : "have"} also picked up.`;
+    }
+    body += `</p>`;
+  }
+
+  if (am.fading.length > 0) {
+    const top = am.fading[0];
+    body += `<p class="insight-body" style="margin-top:24px;"><strong>${DataCore.escapeHtml(top.artist)}</strong> has faded — ${top.priorCount} plays six weeks ago down to ${top.recentCount} now.`;
+    if (am.fading.length > 1) {
+      const others = am.fading.slice(1).map((f) => DataCore.escapeHtml(f.artist)).join(", ");
+      body += ` Same pattern with ${others}.`;
+    }
+    body += `</p>`;
+  }
+
+  return body;
+}
+
+// ---------- Insight 4: Time-of-day shift ----------
+
+function timeBand(hour) {
+  if (hour >= 5 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 17) return "afternoon";
+  if (hour >= 17 && hour < 22) return "evening";
+  return "night";
+}
+
+function computeTimeShift(entries) {
+  if (entries.length === 0) return null;
+
+  const sorted = entries.slice().sort((a, b) => a.played_at - b.played_at);
+  const midpoint = sorted[Math.floor(sorted.length / 2)].played_at;
+
+  const earlier = sorted.filter((e) => e.played_at < midpoint);
+  const later = sorted.filter((e) => e.played_at >= midpoint);
+
+  if (earlier.length < 20 || later.length < 20) return null;
+
+  function bandCounts(list) {
+    const counts = { morning: 0, afternoon: 0, evening: 0, night: 0 };
+    for (const e of list) counts[timeBand(new Date(e.played_at).getUTCHours())]++;
+    return counts;
+  }
+
+  const earlierCounts = bandCounts(earlier);
+  const laterCounts = bandCounts(later);
+
+  function dominant(counts, total) {
+    let best = "morning", bestPct = 0;
+    for (const [band, count] of Object.entries(counts)) {
+      const pct = count / total;
+      if (pct > bestPct) { best = band; bestPct = pct; }
+    }
+    return { band: best, pct: bestPct };
+  }
+
+  const earlierDominant = dominant(earlierCounts, earlier.length);
+  const laterDominant = dominant(laterCounts, later.length);
+
+  return { earlierCounts, laterCounts, earlierTotal: earlier.length, laterTotal: later.length, earlierDominant, laterDominant };
+}
+
+function renderTimeShift(t) {
+  if (!t) return `<p class="insight-body">Not enough spread across time yet to say how your listening hours have shifted.</p>`;
+
+  const bands = ["morning", "afternoon", "evening", "night"];
+  const bandLabels = { morning: "Morning", afternoon: "Afternoon", evening: "Evening", night: "Night" };
+
+  const shifted = t.earlierDominant.band !== t.laterDominant.band;
+
+  let headline;
+  if (shifted) {
+    headline = `Your listening has moved from <span class="accent">${bandLabels[t.earlierDominant.band].toLowerCase()}</span> to <span class="accent">${bandLabels[t.laterDominant.band].toLowerCase()}</span>.`;
+  } else {
+    headline = `<span class="accent">${bandLabels[t.laterDominant.band]}</span> has stayed your main listening window throughout.`;
+  }
+
+  const bars = bands
+    .map((band) => {
+      const earlierPct = Math.round((t.earlierCounts[band] / t.earlierTotal) * 100);
+      return `
+        <div class="shift-bar">
+          <div class="track">
+            <div class="fill then" style="height:${earlierPct}%"></div>
+          </div>
+          <div class="label">${bandLabels[band]}</div>
+        </div>
+      `;
+    })
+    .join("");
+
+  const barsNow = bands
+    .map((band) => {
+      const laterPct = Math.round((t.laterCounts[band] / t.laterTotal) * 100);
+      return `<div class="shift-bar"><div class="track"><div class="fill now" style="height:${laterPct}%"></div></div><div class="label">${bandLabels[band]}</div></div>`;
+    })
+    .join("");
+
+  return `
+    <h3 class="insight-headline display">${headline}</h3>
+    <p class="insight-body">Comparing the earlier half of your archive against the more recent half — UTC hours, so shift for your local time.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:20px;">
+      <div>
+        <p style="font-size:0.78rem; color:var(--text-mid); margin-bottom:8px;">Earlier</p>
+        <div class="shift-bars">${bars}</div>
+      </div>
+      <div>
+        <p style="font-size:0.78rem; color:var(--text-mid); margin-bottom:8px;">More recent</p>
+        <div class="shift-bars">${barsNow}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- Insight 5: Longest streak ----------
+
+function computeStreaks(entries) {
+  const days = [...new Set(entries.map((e) => DataCore.dayKey(e.played_at)))].sort();
+  if (days.length === 0) return null;
+
+  let longest = { start: days[0], end: days[0], length: 1 };
+  let current = { start: days[0], end: days[0], length: 1 };
+
+  for (let i = 1; i < days.length; i++) {
+    const prev = new Date(days[i - 1] + "T00:00:00Z");
+    const cur = new Date(days[i] + "T00:00:00Z");
+    const gap = Math.round((cur - prev) / (1000 * 60 * 60 * 24));
+
+    if (gap === 1) {
+      current.end = days[i];
+      current.length++;
+    } else {
+      if (current.length > longest.length) longest = { ...current };
+      current = { start: days[i], end: days[i], length: 1 };
+    }
+  }
+  if (current.length > longest.length) longest = { ...current };
+
+  const lastDay = new Date(days[days.length - 1] + "T00:00:00Z");
+  const todayKey = DataCore.dayKey(Date.now());
+  const daysSinceLast = Math.round((new Date(todayKey + "T00:00:00Z") - lastDay) / (1000 * 60 * 60 * 24));
+  const currentStreakActive = daysSinceLast <= 1;
+
+  return { longest, currentStreakLength: currentStreakActive ? current.length : 0, currentStreakActive };
+}
+
+function fmtDay(dayStr) {
+  return new Date(dayStr + "T00:00:00Z").toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+}
+
+function renderStreaks(s) {
+  if (!s) return `<p class="insight-body">Not enough data yet to find a streak.</p>`;
+
+  let headline = `Your longest run is <span class="accent">${s.longest.length} day${s.longest.length === 1 ? "" : "s"}</span> in a row.`;
+  let body = `From ${fmtDay(s.longest.start)} to ${fmtDay(s.longest.end)}, something got logged every single day.`;
+
+  if (s.currentStreakActive && s.currentStreakLength > 1) {
+    body += ` You're currently on a ${s.currentStreakLength}-day streak of your own${s.currentStreakLength >= s.longest.length ? " — matching or beating your best" : ""}.`;
+  }
+
+  return `<h3 class="insight-headline display">${headline}</h3><p class="insight-body">${body}</p>`;
+}
+
+// ---------- Render ----------
+
+function render(entries) {
+  const knownArtistNames = DataCore.buildKnownArtistNames(entries);
+
+  const momentum = computeMomentum(entries);
+  const breadth = computeBreadth(entries, knownArtistNames);
+  const artistMomentum = computeArtistMomentum(entries, knownArtistNames);
+  const timeShift = computeTimeShift(entries);
+  const streaks = computeStreaks(entries);
+
+  document.getElementById("content").innerHTML = `
+    <div class="insight-block">
+      <div class="insight-eyebrow">MOMENTUM</div>
+      ${renderMomentum(momentum)}
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-eyebrow">BREADTH VS. DEPTH</div>
+      ${renderBreadth(breadth)}
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-eyebrow">RISING &amp; FADING</div>
+      ${renderArtistMomentum(artistMomentum)}
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-eyebrow">WHEN YOU LISTEN</div>
+      ${renderTimeShift(timeShift)}
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-eyebrow">STREAKS</div>
+      ${renderStreaks(streaks)}
+    </div>
+
+    <footer>These read-outs are generated from patterns in the data — worth taking as a starting point for your own read, not gospel.</footer>
+  `;
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    const entries = await DataCore.loadAllEntries(DATA_BASE);
+    if (entries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+    render(entries);
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
