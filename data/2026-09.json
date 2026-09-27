@@ -37528,5 +37528,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790538481446,
+    "track": "Moth To A Flame (with The Weeknd)",
+    "artist": "Swedish House Mafia, The Weeknd",
+    "album": null,
+    "duration_ms": 234000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790538673080,
+    "track": "Smack That",
+    "artist": "Akon, Eminem",
+    "album": null,
+    "duration_ms": 212360,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
