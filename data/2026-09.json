@@ -36430,5 +36430,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790503644186,
+    "track": "Can't Feel My Face",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 213520,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790503891249,
+    "track": "Always Be My Fault",
+    "artist": "Future, Metro Boomin, The Weeknd",
+    "album": null,
+    "duration_ms": 246666,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
