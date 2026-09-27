@@ -47,12 +47,14 @@ let allArtists = [];
 
 function aggregateArtists(entries) {
   const map = new Map();
+  const knownArtistNames = DataCore.buildKnownArtistNames(entries);
   for (const e of entries) {
-    if (!e.artist) continue;
-    if (!map.has(e.artist)) {
-      map.set(e.artist, { plays: 0, ms: 0, firstPlay: Infinity, lastPlay: 0 });
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    if (!artist) continue;
+    if (!map.has(artist)) {
+      map.set(artist, { plays: 0, ms: 0, firstPlay: Infinity, lastPlay: 0 });
     }
-    const a = map.get(e.artist);
+    const a = map.get(artist);
     a.plays++;
     a.ms += DataCore.playedMs(e);
     if (e.played_at < a.firstPlay) a.firstPlay = e.played_at;
