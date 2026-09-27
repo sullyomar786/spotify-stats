@@ -36466,5 +36466,23 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790504124072,
+    "track": "Good Flirts (feat. Kendrick Lamar & Momo Boyd)",
+    "artist": "Baby Keem, Kendrick Lamar, Momo Boyd",
+    "album": null,
+    "duration_ms": 232424,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
