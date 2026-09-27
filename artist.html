@@ -112,7 +112,8 @@ function render(artistName, entries) {
   }
   try {
     const entries = await DataCore.loadAllEntries(DATA_BASE);
-    const artistEntries = entries.filter((e) => e.artist === artistName);
+    const knownArtistNames = DataCore.buildKnownArtistNames(entries);
+    const artistEntries = entries.filter((e) => DataCore.primaryArtist(e, knownArtistNames) === artistName);
     if (artistEntries.length === 0) {
       DataCore.renderError("content", new Error(`No plays found for "${artistName}"`));
       return;
