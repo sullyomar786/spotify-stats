@@ -38752,5 +38752,23 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790626462996,
+    "track": "luther (with sza)",
+    "artist": "Kendrick Lamar, SZA",
+    "album": null,
+    "duration_ms": 177598,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
