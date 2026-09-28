@@ -38536,5 +38536,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790617109365,
+    "track": "the boy is mine",
+    "artist": "Ariana Grande",
+    "album": null,
+    "duration_ms": 173639,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790617298989,
+    "track": "Rich Spirit",
+    "artist": "Kendrick Lamar",
+    "album": null,
+    "duration_ms": 202285,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
