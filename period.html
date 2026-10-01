@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Periods — Listening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .granularity-picker {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .granularity-picker button {
+    background: var(--black-lift);
+    border: 1px solid var(--rule);
+    color: var(--text-mid);
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .granularity-picker button:hover { color: var(--text); background: var(--rule); }
+  .granularity-picker button.active {
+    color: var(--red);
+    background: var(--red-glow);
+    border-color: var(--red-dim);
+  }
+  .period-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .period-nav button.step {
+    background: var(--black-lift);
+    border: 1px solid var(--rule);
+    color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .period-nav button.step:hover { background: var(--rule); }
+  .period-nav button.step:disabled { opacity: 0.3; cursor: not-allowed; }
+  .period-nav .range {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 180px;
+  }
+  .period-nav button.jump {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--text-mid);
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .period-nav button.jump:hover { color: var(--text); border-color: var(--text-mid); }
+  .in-progress-note {
+    font-size: 0.85rem;
+    color: var(--red);
+    margin-bottom: 40px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="inner">
+    <span class="mark display">Listening</span>
+    <div class="links">
+      <a href="index.html">Overview</a>
+      <a href="trends.html">Trends</a>
+      <a href="year.html">Year in Review</a>
+      <a href="period.html">Periods</a>
+      <a href="insights.html">Insights</a>
+      <a href="artists.html">Artists</a>
+      <a href="albums.html">Albums</a>
+      <a href="history.html">History</a>
+      <a href="discovery.html">Discovery</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1 class="display">Periods</h1>
+    <p>Any day, week, month, or year — stepped through, and measured against the one before it.</p>
+  </div>
+
+  <div id="granularity-picker" class="granularity-picker"></div>
+  <div id="period-nav" class="period-nav"></div>
+  <div id="in-progress-note" class="in-progress-note"></div>
+
+  <div id="content">
+    <div class="status"><span class="display">Slicing up the calendar.</span> Loading your listening history.</div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script>
+const DATA_BASE = "data/";
+
+let allEntries = [];
+let knownArtistNames = null;
+let earliestPlayMs = null;
+
+let granularity = "week";
+let anchorMs = null;
+
+function startOfDay(ts) {
+  const d = new Date(ts);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+}
+
+function startOfWeek(ts) {
+  const d = new Date(startOfDay(ts));
+  const day = d.getUTCDay();
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  d.setUTCDate(d.getUTCDate() + diffToMonday);
+  return d.getTime();
+}
+
+function startOfMonth(ts) {
+  const d = new Date(ts);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+}
+
+function startOfYear(ts) {
+  const d = new Date(ts);
+  return Date.UTC(d.getUTCFullYear(), 0, 1);
+}
+
+function periodStart(ts, g) {
+  if (g === "day") return startOfDay(ts);
+  if (g === "week") return startOfWeek(ts);
+  if (g === "month") return startOfMonth(ts);
+  if (g === "year") return startOfYear(ts);
+}
+
+function addPeriod(ts, g, n) {
+  const d = new Date(ts);
+  if (g === "day") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + n);
+  if (g === "week") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + n * 7);
+  if (g === "month") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + n, 1);
+  if (g === "year") return Date.UTC(d.getUTCFullYear() + n, 0, 1);
+}
+
+function periodEnd(startTs, g) {
+  return addPeriod(startTs, g, 1);
+}
+
+function fmtRange(startTs, g) {
+  const start = new Date(startTs);
+  if (g === "day") {
+    return start.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  }
+  if (g === "week") {
+    const end = new Date(periodEnd(startTs, g) - 24 * 60 * 60 * 1000);
+    const sameMonth = start.getUTCMonth() === end.getUTCMonth() && start.getUTCFullYear() === end.getUTCFullYear();
+    const startStr = start.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    const endStr = end.toLocaleDateString(undefined, sameMonth ? { day: "numeric", year: "numeric" } : { month: "short", day: "numeric", year: "numeric" });
+    return startStr + " – " + endStr;
+  }
+  if (g === "month") {
+    return start.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  }
+  return String(start.getUTCFullYear());
+}
+
+function granularityLabel(g) {
+  return { day: "today", week: "this week", month: "this month", year: "this year" }[g];
+}
+
+function statsForPeriod(startTs, endTs) {
+  const entries = allEntries.filter((e) => e.played_at >= startTs && e.played_at < endTs);
+  const totalMs = entries.reduce((sum, e) => sum + DataCore.playedMs(e), 0);
+  const artistCounts = new Map();
+  const trackCounts = new Map();
+
+  for (const e of entries) {
+    const artist = DataCore.primaryArtist(e, knownArtistNames);
+    if (artist) artistCounts.set(artist, (artistCounts.get(artist) || 0) + 1);
+    if (e.track) {
+      const key = e.track + " — " + (artist || "Unknown");
+      trackCounts.set(key, (trackCounts.get(key) || 0) + 1);
+    }
+  }
+
+  const topArtists = [...artistCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topTracks = [...trackCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  return {
+    entries,
+    plays: entries.length,
+    minutes: totalMs / 1000 / 60,
+    uniqueArtists: artistCounts.size,
+    topArtists,
+    topTracks,
+  };
+}
+
+function subBuckets(startTs, endTs, g) {
+  if (g === "day") {
+    const hourly = Array(24).fill(0);
+    for (const e of allEntries) {
+      if (e.played_at >= startTs && e.played_at < endTs) {
+        hourly[new Date(e.played_at).getUTCHours()]++;
+      }
+    }
+    return { values: hourly, labels: hourly.map((_, h) => (h % 3 === 0 ? h + ":00" : "")) };
+  }
+  if (g === "week" || g === "month") {
+    const dayMs = 24 * 60 * 60 * 1000;
+    const days = [];
+    for (let t = startTs; t < endTs; t += dayMs) days.push(t);
+    const counts = days.map((dayStart) => {
+      const dayEnd = dayStart + dayMs;
+      return allEntries.filter((e) => e.played_at >= dayStart && e.played_at < dayEnd).length;
+    });
+    const labels = days.map((t) =>
+      g === "week"
+        ? new Date(t).toLocaleDateString(undefined, { weekday: "short" })
+        : new Date(t).getUTCDate().toString()
+    );
+    return { values: counts, labels };
+  }
+  const counts = Array(12).fill(0);
+  for (const e of allEntries) {
+    if (e.played_at >= startTs && e.played_at < endTs) {
+      counts[new Date(e.played_at).getUTCMonth()]++;
+    }
+  }
+  const labels = counts.map((_, m) => new Date(Date.UTC(2000, m, 1)).toLocaleDateString(undefined, { month: "short" }));
+  return { values: counts, labels };
+}
+
+function renderGranularityPicker() {
+  const options = [["day", "Day"], ["week", "Week"], ["month", "Month"], ["year", "Year"]];
+  document.getElementById("granularity-picker").innerHTML = options
+    .map(([g, label]) => '<button data-g="' + g + '" class="' + (g === granularity ? "active" : "") + '">' + label + '</button>')
+    .join("");
+
+  document.querySelectorAll("#granularity-picker button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const newG = btn.dataset.g;
+      if (newG === granularity) return;
+      granularity = newG;
+      anchorMs = periodStart(Date.now(), granularity);
+      renderGranularityPicker();
+      renderPeriod();
+    });
+  });
+}
+
+function renderNav(startTs, isCurrent) {
+  const atEarliest = earliestPlayMs !== null && startTs <= periodStart(earliestPlayMs, granularity);
+
+  document.getElementById("period-nav").innerHTML =
+    '<button class="step" id="prev-period" ' + (atEarliest ? "disabled" : "") + ' aria-label="Previous period">←</button>' +
+    '<span class="range display">' + fmtRange(startTs, granularity) + '</span>' +
+    '<button class="step" id="next-period" ' + (isCurrent ? "disabled" : "") + ' aria-label="Next period">→</button>' +
+    (isCurrent ? "" : '<button class="jump" id="jump-current">Jump to ' + granularityLabel(granularity) + '</button>');
+
+  document.getElementById("prev-period")?.addEventListener("click", () => {
+    anchorMs = addPeriod(anchorMs, granularity, -1);
+    renderPeriod();
+  });
+  document.getElementById("next-period")?.addEventListener("click", () => {
+    anchorMs = addPeriod(anchorMs, granularity, 1);
+    renderPeriod();
+  });
+  document.getElementById("jump-current")?.addEventListener("click", () => {
+    anchorMs = periodStart(Date.now(), granularity);
+    renderPeriod();
+  });
+}
+
+function renderRankedList(title, entries, formatFn) {
+  if (entries.length === 0) {
+    return '<div class="ranked-list"><h3>' + title + '</h3><p class="story-sub">Nothing logged in this period.</p></div>';
+  }
+  const items = entries
+    .map(([name, count]) => '<li><span class="name">' + DataCore.escapeHtml(name) + '</span><span class="count">' + formatFn(count) + '</span></li>')
+    .join("");
+  return '<div class="ranked-list"><h3>' + title + '</h3><ol>' + items + '</ol></div>';
+}
+
+function renderCallout(label, current, previous, unit, fmt) {
+  const change = previous === 0 ? (current > 0 ? Infinity : 0) : ((current - previous) / previous) * 100;
+  const isUp = change > 0;
+  const isFiniteChange = Number.isFinite(change);
+  const arrow = isFiniteChange ? (isUp ? "↑" : change < 0 ? "↓" : "→") : "↑";
+  const changeText = isFiniteChange ? arrow + " " + Math.abs(Math.round(change)) + "%" : "new";
+  const cls = isUp || !isFiniteChange ? "up" : change < 0 ? "down" : "";
+  return (
+    '<div class="callout"><div class="delta ' + cls + '">' + fmt(current) + unit + '</div>' +
+    '<div class="desc">' + label + ' — ' + changeText + ' vs. previous ' + granularity + '</div></div>'
+  );
+}
+
+function renderPeriod() {
+  if (!allEntries.length) return;
+
+  const now = Date.now();
+  const start = anchorMs;
+  const end = periodEnd(start, granularity);
+  const currentPeriodStart = periodStart(now, granularity);
+  const isCurrent = start === currentPeriodStart;
+
+  const effectiveEnd = isCurrent ? Math.min(end, now) : end;
+
+  const prevStart = addPeriod(start, granularity, -1);
+  const prevEnd = isCurrent
+    ? prevStart + (effectiveEnd - start)
+    : addPeriod(prevStart, granularity, 1);
+
+  renderNav(start, isCurrent);
+
+  const noteEl = document.getElementById("in-progress-note");
+  if (isCurrent && granularity !== "day") {
+    const pct = Math.round(((effectiveEnd - start) / (end - start)) * 100);
+    noteEl.textContent = "This " + granularity + " is still in progress — " + pct + "% of the way through. The comparison below uses the same elapsed portion of the previous " + granularity + ", so it's a fair like-for-like.";
+  } else if (isCurrent && granularity === "day") {
+    noteEl.textContent = "Today's still going — comparison uses the same time-of-day cutoff from yesterday.";
+  } else {
+    noteEl.textContent = "";
+  }
+
+  const stats = statsForPeriod(start, effectiveEnd);
+  const prevStats = statsForPeriod(prevStart, prevEnd);
+
+  const bucketData = subBuckets(start, end, granularity);
+
+  document.getElementById("content").innerHTML =
+    '<div class="stat-row" style="margin-bottom:48px;">' +
+      '<div class="stat"><div class="num display">' + Math.round(stats.minutes).toLocaleString() + '</div><div class="cap">minutes</div></div>' +
+      '<div class="stat"><div class="num display">' + stats.plays.toLocaleString() + '</div><div class="cap">plays</div></div>' +
+      '<div class="stat"><div class="num display">' + stats.uniqueArtists.toLocaleString() + '</div><div class="cap">artists</div></div>' +
+    '</div>' +
+
+    '<section class="block"><div class="heading"><h2>Compared to last ' + granularity + '</h2></div>' +
+      '<div class="callout-grid">' +
+        renderCallout("Minutes", stats.minutes, prevStats.minutes, "", (v) => Math.round(v).toLocaleString()) +
+        renderCallout("Plays", stats.plays, prevStats.plays, "", (v) => Math.round(v).toLocaleString()) +
+        renderCallout("Distinct artists", stats.uniqueArtists, prevStats.uniqueArtists, "", (v) => Math.round(v)) +
+      '</div>' +
+    '</section>' +
+
+    '<section class="block"><div class="heading"><h2>Through the ' + granularity + '</h2></div>' +
+      '<div class="chart-wrap">' + Charts.lineAreaChart({ values: bucketData.values, labels: bucketData.labels, valueFormatter: (v) => Math.round(v), tooltipLabel: (lab) => lab || "" }) + '</div>' +
+    '</section>' +
+
+    '<section class="block"><div class="heading"><h2>Top of the ' + granularity + '</h2></div>' +
+      '<div class="ranked-pair">' +
+        renderRankedList("Artists", stats.topArtists, (c) => c.toLocaleString()) +
+        renderRankedList("Tracks", stats.topTracks, (c) => c.toLocaleString()) +
+      '</div>' +
+    '</section>' +
+
+    '<footer>All ranges in UTC.</footer>';
+
+  Charts.attachTooltips(document.getElementById("content"));
+}
+
+(async function init() {
+  DataCore.setActiveNav();
+  try {
+    allEntries = await DataCore.loadAllEntries(DATA_BASE);
+    if (allEntries.length === 0) {
+      DataCore.renderError("content", new Error("No listening data found"));
+      return;
+    }
+    knownArtistNames = DataCore.buildKnownArtistNames(allEntries);
+    earliestPlayMs = allEntries.reduce((min, e) => Math.min(min, e.played_at), Infinity);
+
+    anchorMs = periodStart(Date.now(), granularity);
+    renderGranularityPicker();
+    renderPeriod();
+  } catch (err) {
+    DataCore.renderError("content", err);
+  }
+})();
+</script>
+
+</body>
+</html>
