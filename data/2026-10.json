@@ -700,5 +700,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1790883873584,
+    "track": "Always Be My Fault",
+    "artist": "Future, Metro Boomin, The Weeknd",
+    "album": null,
+    "duration_ms": 246666,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1790883985753,
+    "track": "Stargirl Interlude",
+    "artist": "The Weeknd, Lana Del Rey",
+    "album": null,
+    "duration_ms": 111626,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
