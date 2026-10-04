@@ -3004,5 +3004,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791141484836,
+    "track": "Save Your Tears (Remix) (with Ariana Grande) - Bonus Track",
+    "artist": "The Weeknd, Ariana Grande",
+    "album": null,
+    "duration_ms": 191013,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791141695105,
+    "track": "Dancing In The Flames",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 220036,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
