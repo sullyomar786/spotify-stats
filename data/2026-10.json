@@ -3112,5 +3112,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791142949220,
+    "track": "The Abyss (feat. Lana Del Rey)",
+    "artist": "The Weeknd, Lana Del Rey",
+    "album": null,
+    "duration_ms": 282873,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791143126295,
+    "track": "Is There Someone Else?",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 199111,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
