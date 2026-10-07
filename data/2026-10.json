@@ -5146,5 +5146,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791404018729,
+    "track": "Bitch, Don’t Kill My Vibe",
+    "artist": "Kendrick Lamar",
+    "album": null,
+    "duration_ms": 310720,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791404236716,
+    "track": "hey now (feat. dody6)",
+    "artist": "Kendrick Lamar, Dody6",
+    "album": null,
+    "duration_ms": 217478,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
