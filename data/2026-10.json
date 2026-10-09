@@ -6964,5 +6964,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791580383393,
+    "track": "Creepin' (with The Weeknd & 21 Savage)",
+    "artist": "Metro Boomin, The Weeknd, 21 Savage",
+    "album": null,
+    "duration_ms": 221520,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791580609840,
+    "track": "Reminder",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 218880,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
