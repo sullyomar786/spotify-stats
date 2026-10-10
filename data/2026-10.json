@@ -7540,5 +7540,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791667664295,
+    "track": "Take Me Back To LA",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 253734,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791667875880,
+    "track": "Always Be My Fault",
+    "artist": "Future, Metro Boomin, The Weeknd",
+    "album": null,
+    "duration_ms": 246666,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
