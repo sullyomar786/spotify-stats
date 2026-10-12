@@ -10690,5 +10690,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791844085310,
+    "track": "2 On (feat. ScHoolboy Q)",
+    "artist": "Tinashe, ScHoolboy Q",
+    "album": null,
+    "duration_ms": 227000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791844325718,
+    "track": "Too Late",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 239980,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
