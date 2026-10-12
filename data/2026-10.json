@@ -10240,5 +10240,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1791836564420,
+    "track": "Heartless",
+    "artist": "Kanye West",
+    "album": null,
+    "duration_ms": 211000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1791836785579,
+    "track": "LoveGame",
+    "artist": "Lady Gaga",
+    "album": null,
+    "duration_ms": 216333,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
