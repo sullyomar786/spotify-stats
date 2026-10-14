@@ -12760,5 +12760,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1792003586359,
+    "track": "2 On (feat. ScHoolboy Q)",
+    "artist": "Tinashe, ScHoolboy Q",
+    "album": null,
+    "duration_ms": 227000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1792003796421,
+    "track": "Creepin' (with The Weeknd & 21 Savage)",
+    "artist": "Metro Boomin, The Weeknd, 21 Savage",
+    "album": null,
+    "duration_ms": 221520,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
