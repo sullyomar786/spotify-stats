@@ -21526,5 +21526,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1792674898468,
+    "track": "In Your Eyes - Instrumental",
+    "artist": "Lo-Fi Dreamers",
+    "album": null,
+    "duration_ms": 263506,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1792675007766,
+    "track": "You Right - Instrumental Lo-Fi",
+    "artist": "Lowfie, floof",
+    "album": null,
+    "duration_ms": 98086,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
