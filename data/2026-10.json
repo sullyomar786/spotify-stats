@@ -24568,5 +24568,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1792766221663,
+    "track": "Niagara Falls - Instrumental",
+    "artist": "Aesthetic Future",
+    "album": null,
+    "duration_ms": 119588,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1792767053968,
+    "track": "Wicked Games - Instrumental",
+    "artist": "Lo-Fi Dreamers",
+    "album": null,
+    "duration_ms": 292360,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
