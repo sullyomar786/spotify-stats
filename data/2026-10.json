@@ -26548,5 +26548,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1792852620548,
+    "track": "Call Out My Name (Originally Performed by The Weeknd) [Instrumental]",
+    "artist": "Vox Freaks",
+    "album": null,
+    "duration_ms": 226990,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1792853303855,
+    "track": "We Don't Trust You",
+    "artist": "Future, Metro Boomin",
+    "album": null,
+    "duration_ms": 226213,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
