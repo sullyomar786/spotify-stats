@@ -30166,5 +30166,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1792949869767,
+    "track": "One Of The Girls - Instrumental",
+    "artist": "The Weeknd, JENNIE, Lily-Rose Depp",
+    "album": null,
+    "duration_ms": 244684,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1792949975663,
+    "track": "stepping down",
+    "artist": "J.Wexx",
+    "album": null,
+    "duration_ms": 105350,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
