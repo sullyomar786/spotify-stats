@@ -36322,5 +36322,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1793120313863,
+    "track": "Alone Again - Live",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 167253,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1793120578907,
+    "track": "Blinding Lights - Instrumental",
+    "artist": "Lo-Fi Dreamers",
+    "album": null,
+    "duration_ms": 261812,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
