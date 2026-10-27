@@ -35602,5 +35602,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1793109171938,
+    "track": "I Was Never There",
+    "artist": "Joongle, DOSA, Piple",
+    "album": null,
+    "duration_ms": 133000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1793109657645,
+    "track": "I Feel It Coming - lofi version",
+    "artist": "Covers Unplugged",
+    "album": null,
+    "duration_ms": 139325,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
