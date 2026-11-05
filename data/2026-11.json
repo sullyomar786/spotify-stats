@@ -6370,5 +6370,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1793899386248,
+    "track": "Reflections Laughing (feat. Travis Scott, Florence + The Machine)",
+    "artist": "The Weeknd, Travis Scott, Florence + The Machine",
+    "album": null,
+    "duration_ms": 291192,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1793899857484,
+    "track": "Wake Me Up (feat. Justice)",
+    "artist": "The Weeknd, Justice",
+    "album": null,
+    "duration_ms": 308575,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
