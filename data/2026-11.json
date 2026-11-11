@@ -16828,5 +16828,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1794434572473,
+    "track": "I Feel It Coming - Instrumental",
+    "artist": "Lo-Fi Dreamers",
+    "album": null,
+    "duration_ms": 207586,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1794434665699,
+    "track": "Smack That - Lofi Version",
+    "artist": "Sunday Without You",
+    "album": null,
+    "duration_ms": 98186,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
