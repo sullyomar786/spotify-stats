@@ -17422,5 +17422,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1794447206044,
+    "track": "In Vein",
+    "artist": "Rick Ross, The Weeknd",
+    "album": null,
+    "duration_ms": 261853,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1794447210882,
+    "track": "Around Me (feat. Don Toliver)",
+    "artist": "Metro Boomin, Don Toliver",
+    "album": null,
+    "duration_ms": 191520,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
