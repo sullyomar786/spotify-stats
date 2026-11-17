@@ -26350,5 +26350,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1794929563132,
+    "track": "The Way I Am - Lofi Cover",
+    "artist": "Covers Unplugged, Wild Issues",
+    "album": null,
+    "duration_ms": 63000,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1794930261855,
+    "track": "OK (feat. Don Toliver)",
+    "artist": "Kanye West, Ye, Don Toliver",
+    "album": null,
+    "duration_ms": 158193,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
