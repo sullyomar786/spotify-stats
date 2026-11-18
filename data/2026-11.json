@@ -28366,5 +28366,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1795005489571,
+    "track": "The Town",
+    "artist": "The Weeknd",
+    "album": null,
+    "duration_ms": 307346,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1795005895652,
+    "track": "E85",
+    "artist": "Don Toliver",
+    "album": null,
+    "duration_ms": 153181,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
