@@ -31156,5 +31156,23 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1795202874841,
+    "track": "Can't Feel My Face",
+    "artist": "Lofi Fruits Music, Chill Fruits Music",
+    "album": null,
+    "duration_ms": 99140,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
