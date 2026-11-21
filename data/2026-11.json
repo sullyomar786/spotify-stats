@@ -33532,5 +33532,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1795283269441,
+    "track": "Love Me Harder",
+    "artist": "Joongle",
+    "album": null,
+    "duration_ms": 134850,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1795283352296,
+    "track": "Lucid Dreams (Shape Of My Heart)",
+    "artist": "Lofi Fruits Music, Chill Fruits Music",
+    "album": null,
+    "duration_ms": 120624,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
