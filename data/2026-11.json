@@ -35296,5 +35296,41 @@
     "skipped": null,
     "offline": null,
     "incognito_mode": null
+  },
+  {
+    "played_at": 1795459041627,
+    "track": "The Abyss - Instrumental",
+    "artist": "Aesthetic Future",
+    "album": null,
+    "duration_ms": 72124,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
+  },
+  {
+    "played_at": 1795459042316,
+    "track": "Heartless - Instrumental",
+    "artist": "Lo-Fi Dreamers",
+    "album": null,
+    "duration_ms": 185720,
+    "ms_played": null,
+    "source": "live_poll",
+    "platform": null,
+    "country": null,
+    "spotify_track_uri": null,
+    "reason_start": null,
+    "reason_end": null,
+    "shuffle": null,
+    "skipped": null,
+    "offline": null,
+    "incognito_mode": null
   }
 ]
